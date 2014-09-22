@@ -1,6 +1,6 @@
 ---
 
-- hosts: domino-server
+- hosts: domino-servers
   user: root
   roles:
   - domino-server
