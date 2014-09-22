@@ -3,11 +3,11 @@
 
 LOTUS=/opt/ibm/lotus
 # change for Domino 9 --> LOTUS=/opt/ibm/domino
-DOMINO_DATA_PATH=/local/notesdata
+DOMINO_DATA_PATH={{ domino_data_path }}
 DOMINO_SHUTDOWN_TIMEOUT=600
 DOMINO_CONFIGURED="yes"
 
-# -- LANG setting on OS level that should be used. 
+# -- LANG setting on OS level that should be used.
 # new default is to use what is specified in user profile.
 #DOMINO_LANG=en_US.UTF-8
 #DOMINO_LANG=de_DE.UTF-8
@@ -90,4 +90,3 @@ DOMINO_NSD_BEFORE_KILL="yes"
 # -- compact options --
 #DOMINO_START_COMPACT_OPTIONS="-C systemdbs.ind"
 #DOMINO_COMPACT_OPTIONS="-C systemdbs.ind"
-

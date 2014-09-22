@@ -2,3 +2,13 @@
 
 # URL to the domino installation archive
 domino_installation_archive: http://10.0.0.99/ds/DOMI_SRV_901_LIN_XS64_EN_-TRIAL.tar
+
+domino_installation_path: /local/installer
+
+domino_data_path: /local/notesdata
+
+domino_group: domino
+
+domino_user: domino
+
+domino_uid: 10000

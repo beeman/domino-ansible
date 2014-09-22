@@ -13,54 +13,54 @@
   service: name=ip6tables state=stopped enabled=false
 
 - name: Create domino group
-  group: name=domino state=present
+  group: name={{ domino_group }} state=present
 
 - name: Create domino user
-  user: uid=10000 name=domino group=domino
+  user: uid=10000 name={{ domino_user }} group={{ domino_group }}
 
 - name: Create installer directory
-  file: path='/local/installer/' state=directory
+  file: path='{{ domino_installation_path }}' state=directory
 
 - name: Create notesdata directory
-  file: path='/local/notesdata/' state=directory
+  file: path='{{ domino_data_path }}' state=directory
 
 - name: Download Domino installer
-  get_url: url={{ domino_installation_archive }} dest=/local/installer.tar
+  get_url: url={{ domino_installation_archive }} dest={{ domino_installation_path }}.tar
 
 - name: Unpack Domino installer
-  unarchive: src=/local/installer.tar dest=/local/installer/ copy=no creates=/local/installer/linux64/DominoEval/install
+  unarchive: src={{ domino_installation_path }}.tar dest={{ domino_installation_path }} copy=no creates={{ domino_installation_path }}/linux64/DominoEval/install
 
-- name: Copy installation files
-  copy: src={{ item.path }} dest={{ item.dest }} mode=0755
-  with_items:
-    - { path: 'response.dat', dest: '/local/installer/response.dat' }
-    - { path: 'domino.pds', dest: '/local/installer/domino.pds' }
+- name: Copy response file
+  template: src=response.dat.j2 dest={{ domino_installation_path }}/response.dat mode=0755
+
+- name: Copy answer file
+  copy: src=domino.pds dest={{ domino_installation_path }}/domino.pds mode=0755
 
 - name: Install Domino server
-  shell: /local/installer/linux64/DominoEval/install -silent -options /local/installer/response.dat
+  shell: "{{ domino_installation_path }}/linux64/DominoEval/install -silent -options {{ domino_installation_path }}/response.dat"
   args:
     creates: /opt/ibm/lotus/bin/server
 
 - name: Copy configuration files
-  copy: src={{ item.path }} dest={{ item.dest }} mode=0755
+  template: src={{ item.path }} dest={{ item.dest }} mode=0755
   with_items:
-    - { path: 'rc_domino', dest: '/etc/init.d/rc_domino' }
-    - { path: 'rc_domino_script', dest: '/opt/ibm/lotus/rc_domino_script' }
-    - { path: 'rc_domino_config_domino', dest: '/etc/sysconfig/rc_domino_config_domino' }
+    - { path: 'rc_domino.j2', dest: '/etc/init.d/rc_domino' }
+    - { path: 'rc_domino_script.j2', dest: '/opt/ibm/lotus/rc_domino_script' }
+    - { path: 'rc_domino_config_domino.j2', dest: '/etc/sysconfig/rc_domino_config_{{ domino_user }}' }
 
 - name: Set OS limits
-  lineinfile: dest=/etc/security/limits.conf line='domino           {{ item.type }}    nofile          {{ item.value }}' insertbefore='# End of file'
+  lineinfile: dest=/etc/security/limits.conf insertbefore='# End of file' line='domino           {{ item.type }}    nofile          {{ item.value }}'
   with_items:
       - { type: 'soft', value: '60000'}
       - { type: 'hard', value: '80000'}
 
 - name: Configure Domino data
   sudo: true
-  sudo_user: domino
-  shell: /opt/ibm/lotus/bin/server -silent /local/installer/domino.pds
+  sudo_user: "{{ domino_user }}"
+  shell: /opt/ibm/lotus/bin/server -silent {{ domino_installation_path }}/domino.pds
   args:
-    chdir: /local/notesdata/
-    creates: /local/notesdata/names.nsf
+    chdir: "{{ domino_data_path }}"
+    creates: "{{ domino_data_path }}/names.nsf"
 
 - name: Enable and start Domino server
   service: name=rc_domino state=started enabled=yes

@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/sh
 # change this to #!/bin/ksh for AIX and Solaris
 ########################################################################
 # Main Start Script Logic
@@ -37,7 +37,7 @@ if [ -z "$DOMINO_CONFIGURED" ]; then
 
     # standard partition for standard user "notes"
     LOTUS=/opt/ibm/lotus
-    DOMINO_DATA_PATH=/local/notesdata
+    DOMINO_DATA_PATH={{ domino_data_path }}
     DOMINO_SHUTDOWN_TIMEOUT=600
     DOMINO_CONFIGURED="yes"
 

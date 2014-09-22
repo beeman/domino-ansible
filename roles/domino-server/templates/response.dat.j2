@@ -1,9 +1,9 @@
 -G licenseAccepted=true
 -W InstallDataOnlyOptionPanel.InstallDataOnly=false
 -P installLocation="/opt/ibm/lotus"
--W normalData.installLocationData="/local/notesdata"
--W NameUserGroupPanel.UserName="domino"
--W NameUserGroupPanel.GroupName="domino"
+-W normalData.installLocationData="{{ domino_data_path }}"
+-W NameUserGroupPanel.UserName="{{ domino_user }}"
+-W NameUserGroupPanel.GroupName="{{ domino_group }}"
 -W SetupTypePanel.selectedSetupTypeId=EnterpriseServer
 -W ServerSetupPanel.ServerSetupType="Manual"
 -P LicenseFeature.active=true
