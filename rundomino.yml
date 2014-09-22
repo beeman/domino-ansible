@@ -1,7 +1,0 @@
----
-
-- hosts: domino
-  user: root
-  tasks:
-  - name: Start domino
-    command: service rc_domino start
