@@ -1,0 +1,66 @@
+---
+
+- name: Installing packages
+  yum: name={{ item }} state=present
+  with_items:
+   - unzip
+   - glibc.i686
+   - libgcc.i686
+   - libstdc++.i686
+
+- name: Disable iptables
+  service: name=iptables state=stopped enabled=false
+  service: name=ip6tables state=stopped enabled=false
+
+- name: Create domino group
+  group: name=domino state=present
+
+- name: Create domino user
+  user: uid=10000 name=domino group=domino
+
+- name: Create installer directory
+  file: path='/local/installer/' state=directory
+
+- name: Create notesdata directory
+  file: path='/local/notesdata/' state=directory
+
+- name: Download Domino installer
+  get_url: url={{ domino_installation_archive }} dest=/local/installer.tar
+
+- name: Unpack Domino installer
+  unarchive: src=/local/installer.tar dest=/local/installer/ copy=no creates=/local/installer/linux64/DominoEval/install
+
+- name: Copy installation files
+  copy: src={{ item.path }} dest={{ item.dest }} mode=0755
+  with_items:
+    - { path: 'response.dat', dest: '/local/installer/response.dat' }
+    - { path: 'domino.pds', dest: '/local/installer/domino.pds' }
+
+- name: Install Domino server
+  shell: /local/installer/linux64/DominoEval/install -silent -options /local/installer/response.dat
+  args:
+    creates: /opt/ibm/lotus/bin/server
+
+- name: Copy configuration files
+  copy: src={{ item.path }} dest={{ item.dest }} mode=0755
+  with_items:
+    - { path: 'rc_domino', dest: '/etc/init.d/rc_domino' }
+    - { path: 'rc_domino_script', dest: '/opt/ibm/lotus/rc_domino_script' }
+    - { path: 'rc_domino_config_domino', dest: '/etc/sysconfig/rc_domino_config_domino' }
+
+- name: Set OS limits
+  lineinfile: dest=/etc/security/limits.conf line='domino           {{ item.type }}    nofile          {{ item.value }}' insertbefore='# End of file'
+  with_items:
+      - { type: 'soft', value: '60000'}
+      - { type: 'hard', value: '80000'}
+
+- name: Configure Domino data
+  sudo: true
+  sudo_user: domino
+  shell: /opt/ibm/lotus/bin/server -silent /local/installer/domino.pds
+  args:
+    chdir: /local/notesdata/
+    creates: /local/notesdata/names.nsf
+
+- name: Enable and start Domino server
+  service: name=rc_domino state=started enabled=yes
