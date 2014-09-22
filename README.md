@@ -24,3 +24,11 @@ Next run the `ansible-playbook` command to apply the configuration to these host
 ## Configuration
 
 You can change some configuration parameters in the file `roles/domino-server/vars/main.yml`. 
+
+## Credentials
+
+To login on the Domino environment you need to use the following credentials
+
+username   : admin/dominodev
+password   : dominodev
+id file    : notesdata/admin.id
