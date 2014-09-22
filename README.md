@@ -29,6 +29,6 @@ You can change some configuration parameters in the file `roles/domino-server/va
 
 To login on the Domino environment you need to use the following credentials
 
-username   : admin/dominodev
-password   : dominodev
-id file    : notesdata/admin.id
+    username   : admin/dominodev
+    password   : dominodev
+    id file    : /local/notesdata/admin.id
