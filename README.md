@@ -25,6 +25,14 @@ Next run the `ansible-playbook` command to apply the configuration to these host
 
 You can change some configuration parameters in the file `roles/domino-server/vars/main.yml`. 
 
+## Defaults
+
+The default installation of the Domino data directory goed to `/local/notesdata`. The installer will be downloaded from the provider URL and unpacked in `/local/installer`. 
+
+Both paths can be mounted to existing locations, the script will than skip downloading and/or installing the default userdata. 
+
+The domino server runs under the user/group/uid `domino/domino/10000`.
+
 ## Credentials
 
 To login on the Domino environment you need to use the following credentials
