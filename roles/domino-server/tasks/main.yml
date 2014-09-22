@@ -16,7 +16,7 @@
   group: name={{ domino_group }} state=present
 
 - name: Create domino user
-  user: uid=10000 name={{ domino_user }} group={{ domino_group }}
+  user: uid={{ domino_uid }} name={{ domino_user }} group={{ domino_group }}
 
 - name: Create installer directory
   file: path='{{ domino_installation_path }}' state=directory
