@@ -8,10 +8,6 @@
    - libgcc.i686
    - libstdc++.i686
 
-- name: Disable iptables
-  service: name=iptables state=stopped enabled=false
-  service: name=ip6tables state=stopped enabled=false
-
 - name: Create domino group
   group: name={{ domino_group }} state=present
 
