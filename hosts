@@ -1,2 +1,3 @@
 [domino-servers]
+# localhost ansible_connection=local
 domino
